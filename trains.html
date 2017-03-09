@@ -44,7 +44,7 @@
 
         <!-- SELECTION -->
         <div id="trains">
-          <div class="col-xs-5 selectContainer">
+          <div class="col-xs-2 selectContainer">
             <select v-model="lineSelected" v-on:change="getStations()" />
               <option v-for="line in lines">
                 {{ line.code }}
@@ -53,31 +53,19 @@
           </div>
           <br>
 
-          <div>
-            <span v-for="station in stations">{{ station.name }} - </span>
+          <div class="col-xs-3 selectContainer">
+            <span v-for="station in stations">{{ station.name }} <br> </span>
+          </div>
+
+          <div class="col-xs-4 selectContainer">
+            <span v-for="station in stations">{{ station.name }} <br> </span>
+          </div>
+
+          <div class="col-xs-3 selectContainer">
+            <span v-for="schedule in schedulesA">{{ schedule.message }} <br> </span>
           </div>
         </div>
         <br>
-
-        <canvas id="canvas" width="1500" height="100"></canvas>
-
-        <ol>
-          <li class="saint-michel">St Michel
-            <aside>Point de RV</aside>
-          </li>
-          <li class="cityhall">Hotel de Ville
-            <aside>Départ Bus</aside>
-          </li>
-          <li class="opera">Opéra
-            <aside>Opéra Garnier</aside>
-          </li>
-          <li class="catacombes">Catacombes
-            <aside>Chiens interdits</aside>
-          </li>
-          <li class="grands-boulevards">Grands Boulevards
-            <aside>Musée Grévin</aside>
-          </li>
-        </ol>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
