@@ -3,14 +3,15 @@ var app = new Vue({
 
 	data: {
 		lineSelected: null,
-		lines:{},
-		stations:{},
-		schedulesA:{},
+		directionSelected: null,
+		lines: {},
+		directions: {},
+		stations: {},
+		schedulesA: [],
 	},
 
 	mounted:function(){
 		this.getLines();
-         //this.drawStraightLine();
      },
 
      methods: {
@@ -25,11 +26,22 @@ var app = new Vue({
 	    });
      	},
 
+     	getDirections: function() {
+     		this.stations = {};
+     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/destinations/metros/'+this.lineSelected).then(function(response) {
+	        // Success
+	        this.directions = response.body.result.destinations;
+	        //console.log("good");
+	    }, function(response) {
+	        // Failure
+	        //console.log("fail");
+	    });
+     	},
+
      	getStations: function() {
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/stations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.stations = response.body.result.stations;
-	        //this.drawStraightLine();
 	        this.getSchedules();
 	        //console.log("good");
 	    }, function(response) {
@@ -39,40 +51,24 @@ var app = new Vue({
      	},
 
      	getSchedules: function() {
+	     	this.schedulesA = [];
 	     	var count = Object.keys(this.stations).length;
 	     	for(i=0; i < count; i++){
 	     		console.log(this.stations[i].name);
-	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].name+'/A').then(function(response) {
+	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].name+'/'+this.directionSelected).then(function(response) {
 		        // Success
-		        console.log(i);
-		        this.schedulesA = response.body.result.schedules;
+		        this.schedulesA.push(response.body.result.schedules);
 		        //console.log("good");
 		    	}, function(response) {
 		        	// Failure
 		        	console.log("fail");
 		    	});
 		    }
+		    console.log(this.schedulesA);
      	}, 
 
      	drawStraightLine: function() {
-     		var canvas = document.getElementById('canvas');
-     		if (canvas.getContext){
-     			var ctx = canvas.getContext('2d');
-
-		    	//dessine les deux lignes
-		    	ctx.beginPath();
-		    	ctx.moveTo(100,25);
-			    ctx.lineTo(1000,25);
-			    ctx.moveTo(1000,35);
-			    ctx.lineTo(100,35);
-			    ctx.stroke();
-			    
-			    //dessine les arcs sur les cotés
-			    ctx.beginPath();
-			    ctx.arc(1000, 30, 5, (Math.PI/180)*-90, (Math.PI/180)*90, false); //(x, y, rayon, angleInitial(rad), angleFinal(rad), antihoraire)
-			    ctx.arc(100, 30, 5, (Math.PI/180)*90, (Math.PI/180)*-90, false);
-			    ctx.fill();
-			}	
+     		
 		},
 	}
 })
