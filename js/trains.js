@@ -28,6 +28,7 @@ var app = new Vue({
 
      	getDirections: function() {
      		this.stations = {};
+     		this.schedulesA = {};
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/destinations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.directions = response.body.result.destinations;

@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Index</title>
+    <title>Trains</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -44,7 +44,7 @@
 
         <!-- SELECTION -->
         <div id="trains">
-          <div class="col-xs-2 selectContainer">
+          <div class="col-xs-1 selectContainer">
             <select v-model="lineSelected" v-on:change="getDirections()" />
               <option v-for="line in lines">
                 {{ line.code }}
@@ -58,16 +58,21 @@
           </div><br>
 
           <div class="col-xs-3 selectContainer">
-            
-          </div>
-
-          <div class="col-xs-4 selectContainer">
             <span v-for="station in stations">{{ station.name }} <br> </span>
           </div>
 
-          <div class="col-xs-3 selectContainer">
+          <div class="col-xs-2 selectContainer">
             <span v-for="schedule in schedulesA">{{ schedule[0].message }} <br> </span>
           </div>
+
+          <div class="col-xs-2 selectContainer">
+            <span v-for="schedule in schedulesA">{{ schedule[1].message }} <br> </span>
+          </div>
+
+          <div class="col-xs-2 selectContainer">
+            <span v-for="schedule in schedulesA">{{ schedule[2].message }} <br> </span>
+          </div>
+
         </div>
         <br>
 
