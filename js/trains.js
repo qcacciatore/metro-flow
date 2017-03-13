@@ -7,7 +7,7 @@ var app = new Vue({
 		lines: {},
 		directions: {},
 		stations: {},
-		schedulesA: [],
+		schedules: [],
 	},
 
 	mounted:function(){
@@ -28,7 +28,8 @@ var app = new Vue({
 
      	getDirections: function() {
      		this.stations = {};
-     		this.schedulesA = {};
+     		this.directions = {};
+     		this.schedules = [];
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/destinations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.directions = response.body.result.destinations;
@@ -52,20 +53,20 @@ var app = new Vue({
      	},
 
      	getSchedules: function() {
-	     	this.schedulesA = [];
+	     	this.schedules = [];
 	     	var count = Object.keys(this.stations).length;
 	     	for(i=0; i < count; i++){
 	     		console.log(this.stations[i].name);
 	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].name+'/'+this.directionSelected).then(function(response) {
 		        // Success
-		        this.schedulesA.push(response.body.result.schedules);
+		        this.schedules.push(response.body.result.schedules);
 		        //console.log("good");
 		    	}, function(response) {
 		        	// Failure
 		        	console.log("fail");
 		    	});
 		    }
-		    console.log(this.schedulesA);
+		    console.log(this.schedules);
      	}, 
 
      	drawStraightLine: function() {
