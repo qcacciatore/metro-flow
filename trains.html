@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>Index</title>
+    <title>Trains</title>
 
     <!-- Bootstrap -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
@@ -44,40 +44,49 @@
 
         <!-- SELECTION -->
         <div id="trains">
-          <div class="col-xs-5 selectContainer">
-            <select v-model="lineSelected" v-on:change="getStations()" />
-              <option v-for="line in lines">
-                {{ line.code }}
-              </option>
-            </select>
+          <div class="row">
+            <div class="col-md-1 selectContainer">
+              <select v-model="lineSelected" v-on:change="getDirections()" />
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="3B">3 bis</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <!-- <option value="7">7</option> -->
+                <!-- <option value="7B">7 bis</option> -->
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <!-- <option value="10">10</option> -->
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <!-- <option value="13">13</option> -->
+                <option value="14">14</option>
+              </select>
+            </div>
+            <div class="col-md-1 selectContainer">
+              <select v-if="lineSelected" v-model="directionSelected" v-on:change="getStations()" />
+                <option v-for="direction in directions">
+                  {{ direction.name }}
+                </option>
+              </select>
+            </div>
           </div>
-          <br>
 
-          <div>
-            <span v-for="station in stations">{{ station.name }} - </span>
+          <div class="col-md-4 selectContainer">
+            <span v-for="station in stations">{{ station.name }} <br> </span>
+          </div>
+
+          <div class="col-md-2 selectContainer">
+            <span v-for="schedule in schedules">{{ schedule[0].message }} <br> </span>
+          </div>
+
+          <div class="col-md-2 selectContainer">
+            <span v-for="schedule in schedules">{{ schedule[1].message }} <br> </span>
           </div>
         </div>
         <br>
-
-        <canvas id="canvas" width="1500" height="100"></canvas>
-
-        <ol>
-          <li class="saint-michel">St Michel
-            <aside>Point de RV</aside>
-          </li>
-          <li class="cityhall">Hotel de Ville
-            <aside>Départ Bus</aside>
-          </li>
-          <li class="opera">Opéra
-            <aside>Opéra Garnier</aside>
-          </li>
-          <li class="catacombes">Catacombes
-            <aside>Chiens interdits</aside>
-          </li>
-          <li class="grands-boulevards">Grands Boulevards
-            <aside>Musée Grévin</aside>
-          </li>
-        </ol>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>

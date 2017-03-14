@@ -3,21 +3,23 @@ var app = new Vue({
 
 	data: {
 		lineSelected: null,
-		lines:{},
-		stations:{},
+		directionSelected: null,
+		timeOut: null,
+		directions: {},
+		stations: {},
+		schedules: [],
 	},
 
 	mounted:function(){
-		this.getLines();
-         //this.drawStraightLine();
+		
      },
 
      methods: {
-     	getLines: function() {
-     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/lines/metros').then(function(response) {
+     	getDirections: function() {
+     		this.stopRefresh(); //stop the auto refresh and delete stations, directions & schedules
+     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/destinations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
-	        this.lines = response.body.result.metros;
-	        //console.log("good");
+	        this.directions = response.body.result.destinations;
 	    }, function(response) {
 	        // Failure
 	        //console.log("fail");
@@ -25,36 +27,54 @@ var app = new Vue({
      	},
 
      	getStations: function() {
+     		clearTimeout(this.timeOut); //avoid problems with auto-refresh and changement of direction
+     		console.log("timeOut cleaned");
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/stations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.stations = response.body.result.stations;
-	        this.drawStraightLine();
-	        //console.log("good");
+	        this.refreshSchedules();
 	    }, function(response) {
 	        // Failure
 	        //console.log("fail");
 	    });
      	},
 
-     	drawStraightLine: function() {
-     		var canvas = document.getElementById('canvas');
-     		if (canvas.getContext){
-     			var ctx = canvas.getContext('2d');
+     	getSchedules: function() {
+	     	console.log("getSchedules...");
+	     	this.schedules = [];
+	     	var countDirections = Object.keys(this.directions).length;
+	     	for(i=0; i < countDirections; i++){
+	     		if(this.directionSelected == this.directions[i].name){
+	     			directionWay = this.directions[i].way;
+	     		}
+	     	}
+	     	var countStations = Object.keys(this.stations).length;
+	     	for(i=0; i < countStations; i++){
+	     		//console.log(this.stations[i].name);
+	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].slug+'/'+directionWay).then(function(response) {
+		        // Success
+		        this.schedules.push(response.body.result.schedules);
+		        //console.log("good");
+		    	}, function(response) {
+		        	// Failure
+		        	console.log("fail");
+		    	});
+		    }
+     	},
 
-		    	//dessine les deux lignes
-		    	ctx.beginPath();
-		    	ctx.moveTo(100,25);
-			    ctx.lineTo(1000,25);
-			    ctx.moveTo(1000,35);
-			    ctx.lineTo(100,35);
-			    ctx.stroke();
-			    
-			    //dessine les arcs sur les cotés
-			    ctx.beginPath();
-			    ctx.arc(1000, 30, 5, (Math.PI/180)*-90, (Math.PI/180)*90, false); //(x, y, rayon, angleInitial(rad), angleFinal(rad), antihoraire)
-			    ctx.arc(100, 30, 5, (Math.PI/180)*90, (Math.PI/180)*-90, false);
-			    ctx.fill();
-			}	
-		},
+     	refreshSchedules: function() {
+     		console.log("refreshSchedules...");
+     		x = 10;
+     		this.getSchedules();
+     		this.timeOut = setTimeout(this.refreshSchedules, x*1000);
+     	},
+
+     	stopRefresh: function() {
+     		console.log("stopRefresh...");
+     		clearTimeout(this.timeOut);
+     		this.stations = {};
+     		this.directions = {};
+     		this.schedules = [];
+     	}, 
 	}
 })
