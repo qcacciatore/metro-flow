@@ -4,36 +4,22 @@ var app = new Vue({
 	data: {
 		lineSelected: null,
 		directionSelected: null,
-		lines: {},
+		timeOut: null,
 		directions: {},
 		stations: {},
 		schedules: [],
 	},
 
 	mounted:function(){
-		this.getLines();
+		
      },
 
      methods: {
-     	getLines: function() {
-     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/lines/metros').then(function(response) {
-	        // Success
-	        this.lines = response.body.result.metros;
-	        //console.log("good");
-	    }, function(response) {
-	        // Failure
-	        //console.log("fail");
-	    });
-     	},
-
      	getDirections: function() {
-     		this.stations = {};
-     		this.directions = {};
-     		this.schedules = [];
+     		this.stopRefresh(); //stop the auto refresh and delete stations, directions & schedules
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/destinations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.directions = response.body.result.destinations;
-	        //console.log("good");
 	    }, function(response) {
 	        // Failure
 	        //console.log("fail");
@@ -41,11 +27,12 @@ var app = new Vue({
      	},
 
      	getStations: function() {
+     		clearTimeout(this.timeOut); //avoid problems with auto-refresh and changement of direction
+     		console.log("timeOut cleaned");
      		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/stations/metros/'+this.lineSelected).then(function(response) {
 	        // Success
 	        this.stations = response.body.result.stations;
-	        this.getSchedules();
-	        //console.log("good");
+	        this.refreshSchedules();
 	    }, function(response) {
 	        // Failure
 	        //console.log("fail");
@@ -53,11 +40,18 @@ var app = new Vue({
      	},
 
      	getSchedules: function() {
+	     	console.log("getSchedules...");
 	     	this.schedules = [];
-	     	var count = Object.keys(this.stations).length;
-	     	for(i=0; i < count; i++){
-	     		console.log(this.stations[i].name);
-	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].name+'/'+this.directionSelected).then(function(response) {
+	     	var countDirections = Object.keys(this.directions).length;
+	     	for(i=0; i < countDirections; i++){
+	     		if(this.directionSelected == this.directions[i].name){
+	     			directionWay = this.directions[i].way;
+	     		}
+	     	}
+	     	var countStations = Object.keys(this.stations).length;
+	     	for(i=0; i < countStations; i++){
+	     		//console.log(this.stations[i].name);
+	     		this.$http.get('https://api-ratp.pierre-grimaud.fr/v3/schedules/metros/'+this.lineSelected+'/'+this.stations[i].slug+'/'+directionWay).then(function(response) {
 		        // Success
 		        this.schedules.push(response.body.result.schedules);
 		        //console.log("good");
@@ -66,11 +60,21 @@ var app = new Vue({
 		        	console.log("fail");
 		    	});
 		    }
-		    console.log(this.schedules);
-     	}, 
+     	},
 
-     	drawStraightLine: function() {
-     		
-		},
+     	refreshSchedules: function() {
+     		console.log("refreshSchedules...");
+     		x = 10;
+     		this.getSchedules();
+     		this.timeOut = setTimeout(this.refreshSchedules, x*1000);
+     	},
+
+     	stopRefresh: function() {
+     		console.log("stopRefresh...");
+     		clearTimeout(this.timeOut);
+     		this.stations = {};
+     		this.directions = {};
+     		this.schedules = [];
+     	}, 
 	}
 })
