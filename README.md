@@ -4,33 +4,16 @@ Web page that display the current positions of the metros in Paris.
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+Few requirements to run the project
 
-### Prerequisites
+### CORS
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-### Installing
-
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
+In order to use Metro Flow, you have to download this tool :
 
 ```
-Give the example
+https://chrome.google.com/webstore/detail/allow-control-allow-origi/nlfbmbojpeacfghkpbjhddihlkkiljbi
 ```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
+It will allow you to call the API.
 
 ## Running the tests
 
