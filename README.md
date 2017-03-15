@@ -1,6 +1,6 @@
-# Project Title
+# Metro Flow
 
-One Paragraph of project description goes here
+Web page that display the current positions of the metros in Paris.
 
 ## Getting Started
 
